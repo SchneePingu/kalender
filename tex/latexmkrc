@@ -1,0 +1,2 @@
+$lualatex = 'lualatex -interaction=nonstopmode -file-line-error %O %S';
+$failure_cmd = 'bash ./make_error_pdf.sh "%R"';

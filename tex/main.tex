@@ -1,0 +1,481 @@
+\documentclass[12pt]{article}
+
+\usepackage{tikz, fontspec, xcolor, geometry, pgffor, intcalc, atbegshi, afterpage, rotating, pdfpages, eso-pic}
+\geometry{
+  paperwidth=303mm,
+  paperheight=426mm,
+  margin=0mm
+}
+\graphicspath{ {../pics/} }
+
+%\usepackage{lua-visual-debug}
+
+% -- Settings --
+\newcommand{\CalendarName}{}
+\newcommand{\isLeapYear}{\false}
+\newcommand{\DayNumberOfLastMondayOfDecemberOfLastYear}{29}
+
+\newcommand{\JanuarHolidays}{1,6}
+\newcommand{\FebruarHolidays}{}
+\newcommand{\MärzHolidays}{}
+\newcommand{\AprilHolidays}{3,6,31}
+\newcommand{\MaiHolidays}{1,14,25}
+\newcommand{\JuniHolidays}{4}
+\newcommand{\JuliHolidays}{}
+\newcommand{\AugustHolidays}{15}
+\newcommand{\SeptemberHolidays}{33}
+\newcommand{\OktoberHolidays}{3,32}
+\newcommand{\NovemberHolidays}{1}
+\newcommand{\DezemberHolidays}{25,26,32}
+
+\newcommand{\colorDunkelblau}{21a0e7}
+\newcommand{\colorHellblau}{5bc0de}
+\newcommand{\colorGelb}{ffcc5c}
+\newcommand{\colorRot}{ff6f69}
+\newcommand{\colorLachsfarben}{ff9966}
+\newcommand{\colorGruen}{6cbf6c}
+
+% -- Colors --
+\definecolor{CoverColor}{HTML}{50938a}
+\definecolor{WeekdayNameColor}{HTML}{525254}
+\definecolor{LineColor}{HTML}{5A5f7A}
+\definecolor{ActiveDayNumberColor}{HTML}{525254}
+\definecolor{InactiveDayNumberColor}{HTML}{A4A5A8}
+\definecolor{HolidayColor}{HTML}{500090}
+
+\definecolor{JanuarColor}{HTML}{\colorDunkelblau}
+\definecolor{FebruarColor}{HTML}{\colorHellblau}
+\definecolor{MärzColor}{HTML}{\colorGruen}
+\definecolor{AprilColor}{HTML}{\colorLachsfarben}
+\definecolor{MaiColor}{HTML}{\colorRot}
+\definecolor{JuniColor}{HTML}{\colorLachsfarben}
+\definecolor{JuliColor}{HTML}{\colorGelb}
+\definecolor{AugustColor}{HTML}{\colorHellblau}
+\definecolor{SeptemberColor}{HTML}{\colorGruen}
+\definecolor{OktoberColor}{HTML}{\colorGelb}
+\definecolor{NovemberColor}{HTML}{\colorDunkelblau}
+\definecolor{DezemberColor}{HTML}{\colorRot}
+
+\definecolor{CalendarNameColor}{HTML}{0e1111}
+
+\definecolor{BottomHelperLineColor}{HTML}{DFE3EE}
+
+% -- Months Pictures --
+\newcommand{\JanuarPicture}{Januar.png}
+\newcommand{\FebruarPicture}{Februar.png}
+\newcommand{\MärzPicture}{März.png}
+\newcommand{\AprilPicture}{April.png}
+\newcommand{\MaiPicture}{Mai.png}
+\newcommand{\JuniPicture}{Juni.png}
+\newcommand{\JuliPicture}{Juli.png}
+\newcommand{\AugustPicture}{August.png}
+\newcommand{\SeptemberPicture}{September.png}
+\newcommand{\OktoberPicture}{Oktober.png}
+\newcommand{\NovemberPicture}{November.png}
+\newcommand{\DezemberPicture}{Dezember.png}
+
+% -- Months Prompts --
+\newcommand{\JanuarPrompt}{Januar.txt}
+\newcommand{\FebruarPrompt}{Februar.txt}
+\newcommand{\MärzPrompt}{März.txt}
+\newcommand{\AprilPrompt}{April.txt}
+\newcommand{\MaiPrompt}{Mai.txt}
+\newcommand{\JuniPrompt}{Juni.txt}
+\newcommand{\JuliPrompt}{Juli.txt}
+\newcommand{\AugustPrompt}{August.txt}
+\newcommand{\SeptemberPrompt}{September.txt}
+\newcommand{\OktoberPrompt}{Oktober.txt}
+\newcommand{\NovemberPrompt}{November.txt}
+\newcommand{\DezemberPrompt}{Dezember.txt}
+
+% -- Constants --
+\newcommand{\NumberOfWeekdays}{7}
+\newcommand{\NumberOfWeeks}{5}
+\newcommand{\NumberOfDays}{\calculateValue{\NumberOfWeekdays * \NumberOfWeeks}}
+
+\newcommand{\JanuarNumberOfDays}{31}
+\newcommand{\FebruarNumberOfDays}{28}
+\newcommand{\FebruarLeapYearNumberOfDays}{29}
+\newcommand{\MärzNumberOfDays}{31}
+\newcommand{\AprilNumberOfDays}{30}
+\newcommand{\MaiNumberOfDays}{31}
+\newcommand{\JuniNumberOfDays}{30}
+\newcommand{\JuliNumberOfDays}{31}
+\newcommand{\AugustNumberOfDays}{31}
+\newcommand{\SeptemberNumberOfDays}{30}
+\newcommand{\OktoberNumberOfDays}{31}
+\newcommand{\NovemberNumberOfDays}{30}
+\newcommand{\DezemberNumberOfDays}{31}
+
+% -- Spacings --
+\newcommand{\SpacingsUnit}{cm}
+\newcommand{\TopVerticalSpacing}{1.5}
+\newcommand{\MonthNameVerticalSpacing}{1.75}
+\newcommand{\LineWidth}{0.025}
+\newcommand{\WeekdayNamesHeight}{2}
+\newcommand{\GridWidth}{27}
+\newcommand{\GridStep}{\calculateValue{\GridWidth / \NumberOfWeekdays}}
+
+\newcommand{\DayNumberVerticalSpacing}{\GridStep * 0.15}
+\newcommand{\DayNumberHorizontalSpacing}{\GridStep * 0.2}
+
+\newcommand{\CalendarNameVerticalSpacing}{1.75}
+
+\newcommand{\BottomHelperLineVerticalSpacing}{\calculateValue{42.6 - 30.3}}
+
+% -- Font Sizes --
+
+\newcommand{\MonthNameFontSize}{\fontsize{64pt}{12pt}\selectfont}
+\newcommand{\WeekdayNameFontSize}{\fontsize{18pt}{12pt}\selectfont}
+\newcommand{\DayNumberFontSize}{\fontsize{14pt}{12pt}\selectfont}
+
+% -- Fonts --
+
+\newcommand{\CalendarFont}{RobotoCondensedBold}
+
+% -- Counters --
+
+\newcounter{DayIndex}
+\newcounter{Row}
+\newcounter{Column}
+\newcounter{NumberOfDaysForNextMonth}
+
+\newcounter{FirstDayNumber}
+\newcounter{NumberOfDaysOfLastMonth}
+
+% -- Miscellaneous --
+
+\newcommand\calculateValue[1]{\directlua{tex.sprint(#1)}}
+\newcommand{\true}{1}
+\newcommand{\false}{0}
+
+\newcommand{\drawBottomHelperLine}{
+    \begin{tikzpicture}[remember picture,overlay]
+        \draw [remember picture,overlay,BottomHelperLineColor]
+        ([yshift=\BottomHelperLineVerticalSpacing cm]current page.south west)
+        --
+        ([yshift=\BottomHelperLineVerticalSpacing cm]current page.south east);
+\end{tikzpicture}
+}
+
+\newcommand{\CoverBackground}{%
+  \AddToShipoutPictureBG*{%
+    \AtPageLowerLeft{%
+      \color{CoverColor}\rule{\paperwidth}{\paperheight}%
+    }%
+  }%
+}
+
+
+% -- Calendar Commands --
+
+% 1: Name of month
+% 2: Color of text
+\newcommand{\drawMonthName}[2]{
+    \node at
+    (\GridWidth / 2, \WeekdayNamesHeight + \MonthNameVerticalSpacing)
+    { \MonthNameFontSize \textcolor{#2}{#1} };
+}
+
+\newcommand{\drawLineSeparator}{
+    \draw [color = LineColor, line width = \LineWidth \SpacingsUnit]
+    (0, \WeekdayNamesHeight)
+    --
+    (\GridWidth, \WeekdayNamesHeight);
+}
+
+\newcommand{\drawAllWeekdayNames}{
+    \drawWeekdayName{0}{Montag}
+    \drawWeekdayName{1}{Dienstag}
+    \drawWeekdayName{2}{Mittwoch}
+    \drawWeekdayName{3}{Donnerstag}
+    \drawWeekdayName{4}{Freitag}
+    \drawWeekdayName{5}{Samstag}
+    \drawWeekdayName{6}{Sonntag}
+}
+
+% 1: Index of weekday {0, .. , 6}
+% 2: Name of weekday
+\newcommand{\drawWeekdayName}[2]{
+    \node at
+    (#1 * \GridStep + \GridStep / 2, \WeekdayNamesHeight * 0.53)
+    { \WeekdayNameFontSize \vphantom{MontagDienstagMittwochDonnerstagFreitagSamstagSonntag} \textcolor{WeekdayNameColor}{#2} };
+}
+
+\newcommand{\drawGridLines}{
+    \draw [step = \GridStep \SpacingsUnit, color = LineColor, line width = \LineWidth \SpacingsUnit]
+    (0, \LineWidth / 2)
+    grid
+    (\NumberOfWeekdays * \GridStep, - \NumberOfWeeks * \GridStep - \LineWidth / 2);
+}
+
+% 1: Color of fields
+\newcommand{\colorWeekendFields}[1]{
+     \foreach \column in {5, 6} {
+         \path [fill = #1, draw = none]
+	 (\column * \GridStep, 0)
+	 rectangle
+	 (\calculateValue{\column + 1} * \GridStep, - \NumberOfWeeks * \GridStep);
+     }
+}
+
+% 1: Number of days of current month
+\newcommand{\drawDayNumbers}[1]{
+    \setcounter{DayIndex}{0}
+
+    % Draw day numbers of last month
+    \ifnum \arabic{FirstDayNumber} < \calculateValue{\arabic{NumberOfDaysOfLastMonth} + 1}
+        \foreach \inactiveDayNumber in {\arabic{FirstDayNumber}, ..., \arabic{NumberOfDaysOfLastMonth}} {
+            \setcounter{Row}{\intcalcDiv{\arabic{DayIndex}}{\NumberOfWeekdays}}
+            \setcounter{Column}{\intcalcMod{\arabic{DayIndex}}{\NumberOfWeekdays}}
+
+            \drawInactiveDayNumber{\inactiveDayNumber}
+
+	    \stepcounter{DayIndex}
+        }
+    \fi
+
+    % Draw day numbers of current month
+    \foreach \activeDayNumber in {1, ..., #1} {
+        \setcounter{Row}{\intcalcDiv{\arabic{DayIndex}}{\NumberOfWeekdays}}
+        \setcounter{Column}{\intcalcMod{\arabic{DayIndex}}{\NumberOfWeekdays}}
+
+        \ifnum \arabic{Row} > \calculateValue{\NumberOfWeeks - 2}
+	    \ifnum \arabic{Column} = 0
+	        \setcounter{FirstDayNumber}{\activeDayNumber}
+	    \fi
+
+	    \ifnum \arabic{Column} = 6
+	        \setcounter{FirstDayNumber}{\calculateValue{#1 + 1}}
+	    \fi
+	\fi
+
+        \ifnum \arabic{Row} > \calculateValue{\NumberOfWeeks - 1}
+	    % The day index exceeds the maximal number of fields,
+	    % such that the day number needs to be drawn at the beginning of calendar fields.
+            \setcounter{Row}{\intcalcMod{\arabic{Row}}{\NumberOfWeeks}}
+	\fi
+
+        \drawActiveDayNumber{\activeDayNumber}
+
+	\stepcounter{DayIndex}
+    }
+
+    % Draw day numbers of next month
+    \ifnum \arabic{DayIndex} < \NumberOfDays
+        \setcounter{NumberOfDaysForNextMonth}{\calculateValue{\NumberOfDays - \arabic{DayIndex}}}
+
+        \foreach \inactiveDayNumber in {1,...,\arabic{NumberOfDaysForNextMonth}} {
+            \setcounter{Row}{\intcalcDiv{\arabic{DayIndex}}{\NumberOfWeekdays}}
+            \setcounter{Column}{\intcalcMod{\arabic{DayIndex}}{\NumberOfWeekdays}}
+
+            \ifnum \arabic{Row} > \calculateValue{\NumberOfWeeks - 2}
+	        \ifnum \arabic{Column} = 0
+	            \setcounter{FirstDayNumber}{\activeDayNumber}
+	        \fi
+	    \fi
+
+            \drawInactiveDayNumber{\inactiveDayNumber}
+
+	    \stepcounter{DayIndex}
+	}
+    \fi
+
+    \setcounter{NumberOfDaysOfLastMonth}{#1}
+}
+
+% 1: Number of day
+\newcommand{\drawInactiveDayNumber}[1]{
+    \node at
+    (\calculateValue{\arabic{Column} + 1} * \GridStep - \DayNumberHorizontalSpacing, - \arabic{Row} * \GridStep - \DayNumberVerticalSpacing)
+    { \DayNumberFontSize \textcolor{InactiveDayNumberColor}{#1} };
+}
+
+% 1: Number of day
+\newcommand{\drawActiveDayNumber}[1]{
+    \node at
+    (\arabic{Column} * \GridStep + \DayNumberHorizontalSpacing, - \arabic{Row} * \GridStep - \DayNumberVerticalSpacing)
+    { \DayNumberFontSize \textcolor{ActiveDayNumberColor}{#1} };
+}
+
+
+% 1: List of holidays
+\newcommand{\colorHolidays}[1]{
+    \foreach \dayNumber in #1 {
+        \colorDay{\dayNumber}{HolidayColor!10}
+    }
+}
+
+% 1: Number of day to be colored
+% 2: Color of day field
+\newcommand{\colorDay}[2]{
+    \ifnum \arabic{FirstDayNumber} < \calculateValue{\arabic{NumberOfDaysOfLastMonth} + 1}
+        \setcounter{DayIndex}{\calculateValue{\arabic{NumberOfDaysOfLastMonth} + 1 -\arabic{FirstDayNumber}}}
+    \else
+        \setcounter{DayIndex}{0}
+    \fi
+    \foreach \dayNumber in {1,...,#1} {
+        \setcounter{Row}{\intcalcDiv{\arabic{DayIndex}}{\NumberOfWeekdays}}
+        \setcounter{Column}{\intcalcMod{\arabic{DayIndex}}{\NumberOfWeekdays}}
+
+        \ifnum \arabic{Row} > \calculateValue{\NumberOfWeeks - 1}
+            \setcounter{Row}{\intcalcMod{\arabic{Row}}{\NumberOfWeeks}}
+	\fi
+
+	\stepcounter{DayIndex}
+    }
+
+    \colorCell{#2}
+}
+
+% 1: Color of cell
+\newcommand{\colorCell}[2]{
+    \path [fill = white, draw = none]
+    (\arabic{Column} * \GridStep, -\arabic{Row} * \GridStep)
+    rectangle
+    (\calculateValue{\arabic{Column} + 1} * \GridStep, -\calculateValue{\arabic{Row} + 1} * \GridStep);
+
+    \path [fill = #1, draw = none]
+    (\arabic{Column} * \GridStep, -\arabic{Row} * \GridStep)
+    rectangle
+    (\calculateValue{\arabic{Column} + 1} * \GridStep, -\calculateValue{\arabic{Row} + 1} * \GridStep);
+}
+
+% 1: Number of days of current month
+\newcommand{\colorOutOfMonthDays}[1]{
+    \setcounter{DayIndex}{0}
+
+    % Draw day numbers of last month
+    \ifnum \arabic{FirstDayNumber} < \calculateValue{\arabic{NumberOfDaysOfLastMonth} + 1}
+        \foreach \inactiveDayNumber in {\arabic{FirstDayNumber}, ..., \arabic{NumberOfDaysOfLastMonth}} {
+            \setcounter{Row}{\intcalcDiv{\arabic{DayIndex}}{\NumberOfWeekdays}}
+            \setcounter{Column}{\intcalcMod{\arabic{DayIndex}}{\NumberOfWeekdays}}
+
+	    \colorCell{InactiveDayNumberColor!10}
+
+	    \stepcounter{DayIndex}
+        }
+    \fi
+
+    % Draw day numbers of current month
+    \foreach \activeDayNumber in {1, ..., #1} {
+        \setcounter{Row}{\intcalcDiv{\arabic{DayIndex}}{\NumberOfWeekdays}}
+        \setcounter{Column}{\intcalcMod{\arabic{DayIndex}}{\NumberOfWeekdays}}
+
+        \ifnum \arabic{Row} > \calculateValue{\NumberOfWeeks - 1}
+	    % The day index exceeds the maximal number of fields,
+	    % such that the day number needs to be drawn at the beginning of calendar fields.
+            \setcounter{Row}{\intcalcMod{\arabic{Row}}{\NumberOfWeeks}}
+	\fi
+
+	\stepcounter{DayIndex}
+    }
+
+    % Draw day numbers of next month
+    \ifnum \arabic{DayIndex} < \NumberOfDays
+        \setcounter{NumberOfDaysForNextMonth}{\calculateValue{\NumberOfDays - \arabic{DayIndex}}}
+
+	\foreach \inactiveDayNumber in {1,...,\arabic{NumberOfDaysForNextMonth}} {
+            \setcounter{Row}{\intcalcDiv{\arabic{DayIndex}}{\NumberOfWeekdays}}
+            \setcounter{Column}{\intcalcMod{\arabic{DayIndex}}{\NumberOfWeekdays}}
+
+	    \colorCell{InactiveDayNumberColor!10}
+
+	    \stepcounter{DayIndex}
+	}
+    \fi
+}
+
+% 1: Name of month
+% 2: Color of month name
+% 3: Number of days of current month
+% 4: List of holidays
+\newcommand{\drawCalendarPage}[4]{
+    \newpage
+    \thispagestyle{empty}
+    \setmainfont{\CalendarFont}
+    \vspace*{\TopVerticalSpacing \SpacingsUnit}
+    \begin{center}
+        \begin{tikzpicture}
+            \drawMonthName{#1}{#2}
+            \drawLineSeparator
+            \drawAllWeekdayNames
+            \colorWeekendFields{#2!10}
+	    \colorOutOfMonthDays{#3}
+	    \colorHolidays{#4}
+            \drawGridLines
+            \drawDayNumbers{#3}
+        \end{tikzpicture}
+    \end{center}
+}
+
+
+\newcommand{\addPicturePage}[2]{%
+  \clearpage
+  \thispagestyle{empty}%
+  \begin{tikzpicture}[remember picture,overlay]
+    % Add an up-side down picture at the top of the page.
+    \node[anchor=north west,inner sep=0] at (current page.north west) {%
+      \rotatebox{180}{\includegraphics[width=\paperwidth,height=\paperwidth]{#2}}%
+    };
+    % Add a colored rectangle as an overlay at the top of the page.
+    \fill[#1] (current page.north west) rectangle ([yshift=-2cm]current page.north east);
+  \end{tikzpicture}%
+  \clearpage
+}
+
+
+\newcommand{\drawCalendarYear}{
+    \setcounter{FirstDayNumber}{\DayNumberOfLastMondayOfDecemberOfLastYear}
+    \setcounter{NumberOfDaysOfLastMonth}{\DezemberNumberOfDays}
+
+    \addPicturePage{JanuarColor}{\JanuarPicture}
+    \drawCalendarPage{Januar}{JanuarColor}{\JanuarNumberOfDays}{\JanuarHolidays}
+
+    \addPicturePage{FebruarColor}{\FebruarPicture}
+    \ifnum \isLeapYear = \true
+        \drawCalendarPage{Februar}{FebruarColor}{\FebruarLeapYearNumberOfDays}{\FebruarHolidays}
+    \else
+        \drawCalendarPage{Februar}{FebruarColor}{\FebruarNumberOfDays}{\FebruarHolidays}
+    \fi
+
+    \addPicturePage{MärzColor}{\MärzPicture}
+    \drawCalendarPage{März}{MärzColor}{\MärzNumberOfDays}{\MärzHolidays}
+    \addPicturePage{AprilColor}{\AprilPicture}
+    \drawCalendarPage{April}{AprilColor}{\AprilNumberOfDays}{\AprilHolidays}
+    \addPicturePage{MaiColor}{\MaiPicture}
+    \drawCalendarPage{Mai}{MaiColor}{\MaiNumberOfDays}{\MaiHolidays}
+    \addPicturePage{JuniColor}{\JuniPicture}
+    \drawCalendarPage{Juni}{JuniColor}{\JuniNumberOfDays}{\JuniHolidays}
+    \addPicturePage{JuliColor}{\JuliPicture}
+    \drawCalendarPage{Juli}{JuliColor}{\JuliNumberOfDays}{\JuliHolidays}
+    \addPicturePage{AugustColor}{\AugustPicture}
+    \drawCalendarPage{August}{AugustColor}{\AugustNumberOfDays}{\AugustHolidays}
+    \addPicturePage{SeptemberColor}{\SeptemberPicture}
+    \drawCalendarPage{September}{SeptemberColor}{\SeptemberNumberOfDays}{\SeptemberHolidays}
+    \addPicturePage{OktoberColor}{\OktoberPicture}
+    \drawCalendarPage{Oktober}{OktoberColor}{\OktoberNumberOfDays}{\OktoberHolidays}
+    \addPicturePage{NovemberColor}{\NovemberPicture}
+    \drawCalendarPage{November}{NovemberColor}{\NovemberNumberOfDays}{\NovemberHolidays}
+    \addPicturePage{DezemberColor}{\DezemberPicture}
+    \drawCalendarPage{Dezember}{DezemberColor}{\DezemberNumberOfDays}{\DezemberHolidays}
+}
+
+
+% -- Calendar Content --
+
+\AtBeginShipoutFirst{\drawBottomHelperLine}
+\AtBeginShipout{\AtBeginShipoutAddToBox{\drawBottomHelperLine}}
+
+\begin{document}
+
+\CoverBackground
+\includepdf[pages=1,pagecommand={\thispagestyle{empty}}]{Cover.pdf}
+\ClearShipoutPictureBG
+\drawCalendarYear
+\newpage
+\CoverBackground
+\includepdf[pages=1,pagecommand={\thispagestyle{empty}}]{Outro.pdf}
+\ClearShipoutPictureBG
+
+\end{document}
