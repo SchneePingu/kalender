@@ -1,6 +1,6 @@
 \documentclass[12pt]{article}
 
-\usepackage{tikz, fontspec, xcolor, geometry, pgffor, intcalc, atbegshi, afterpage, rotating, pdfpages, eso-pic, etoolbox}
+\usepackage{tikz, fontspec, xcolor, geometry, pgffor, intcalc, atbegshi, afterpage, rotating, pdfpages, eso-pic, etoolbox, luacode}
 \geometry{
   paperwidth=303mm,
   paperheight=426mm,
@@ -10,9 +10,9 @@
 
 %\usepackage{lua-visual-debug}
 
+
 % -- Settings --
 \def\year{2026}
-\newcommand{\DayNumberOfLastMondayOfDecemberOfLastYear}{29}
 
 \def\JanuarHolidays{1,6}
 \def\FebruarHolidays{}
@@ -206,6 +206,39 @@
 }
 
 \SetIsLeapYear{\year}
+
+
+% holds the result (as digits)
+\def\DayNumberOfLastMondayOfDecemberOfLastYear{0}
+
+% sets \DayNumberOfLastMondayOfDecemberOfLastYear for a given year #1
+\def\SetDayNumberOfLastMondayOfDecemberOfLastYear#1{%
+  \begingroup
+  % y = previous year
+  \count0=\numexpr#1-1\relax
+
+  % Compute weekday of Dec 31 of year y using:
+  % w = ( y + floor(y/4) - floor(y/100) + floor(y/400) + 35 ) mod 7
+  % and then w := w+1 so that Sunday=1, Monday=2, ..., Saturday=7
+  \count2=\numexpr\count0 + \count0/4 - \count0/100 + \count0/400 + 35\relax
+  \count4=\numexpr\count2 - 7*(\count2/7)\relax % 0..6
+  \count6=\numexpr\count4 + 1\relax            % 1..7 (Sun=1)
+
+  % offset from Monday (Monday=2 in this scheme)
+  \count8=\numexpr\count6-2\relax
+  \count10=\numexpr\count8 - 7*(\count8/7)\relax % may be negative
+  \ifnum\count10<0 \count10=\numexpr\count10+7\relax\fi
+
+  % last Monday day-of-month
+  \count12=\numexpr31-\count10\relax
+
+  % store globally
+  \xdef\DayNumberOfLastMondayOfDecemberOfLastYear{\the\count12}%
+  \endgroup
+}
+
+\SetDayNumberOfLastMondayOfDecemberOfLastYear{\year}
+
 
 % -- Calendar Commands --
 
