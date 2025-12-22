@@ -1,4 +1,4 @@
-PWD /home/dani/Dev/kalender2027/tex
+PWD /home/dani/Dev/kalender/tex
 INPUT /var/lib/texmf/web2c/luahbtex/lualatex.fmt
 INPUT ./main.tex
 OUTPUT main.log
@@ -161,6 +161,7 @@ INPUT /usr/share/texlive/texmf-dist/tex/latex/pdfpages/pdfpages.sty
 INPUT /usr/share/texlive/texmf-dist/tex/latex/tools/calc.sty
 INPUT /usr/share/texlive/texmf-dist/tex/latex/eso-pic/eso-pic.sty
 INPUT /usr/share/texlive/texmf-dist/tex/latex/pdfpages/ppluatex.def
+INPUT /usr/share/texlive/texmf-dist/tex/latex/etoolbox/etoolbox.sty
 INPUT ./main.aux
 OUTPUT main.aux
 INPUT /usr/share/texlive/texmf-dist/tex/latex/base/ts1cmr.fd

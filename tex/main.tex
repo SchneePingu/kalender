@@ -1,6 +1,6 @@
 \documentclass[12pt]{article}
 
-\usepackage{tikz, fontspec, xcolor, geometry, pgffor, intcalc, atbegshi, afterpage, rotating, pdfpages, eso-pic}
+\usepackage{tikz, fontspec, xcolor, geometry, pgffor, intcalc, atbegshi, afterpage, rotating, pdfpages, eso-pic, etoolbox}
 \geometry{
   paperwidth=303mm,
   paperheight=426mm,
@@ -15,18 +15,18 @@
 \newcommand{\isLeapYear}{\false}
 \newcommand{\DayNumberOfLastMondayOfDecemberOfLastYear}{29}
 
-\newcommand{\JanuarHolidays}{1,6}
-\newcommand{\FebruarHolidays}{}
-\newcommand{\MärzHolidays}{}
-\newcommand{\AprilHolidays}{3,6,31}
-\newcommand{\MaiHolidays}{1,14,25}
-\newcommand{\JuniHolidays}{4}
-\newcommand{\JuliHolidays}{}
-\newcommand{\AugustHolidays}{15}
-\newcommand{\SeptemberHolidays}{33}
-\newcommand{\OktoberHolidays}{3,32}
-\newcommand{\NovemberHolidays}{1}
-\newcommand{\DezemberHolidays}{25,26,32}
+\def\JanuarHolidays{1,6}
+\def\FebruarHolidays{1}
+\def\MärzHolidays{1}
+\def\AprilHolidays{3,6,31}
+\def\MaiHolidays{1,14,25}
+\def\JuniHolidays{4}
+\def\JuliHolidays{1}
+\def\AugustHolidays{15}
+\def\SeptemberHolidays{33}
+\def\OktoberHolidays{3,32}
+\def\NovemberHolidays{1}
+\def\DezemberHolidays{25,26,32}
 
 \newcommand{\colorDunkelblau}{21a0e7}
 \newcommand{\colorHellblau}{5bc0de}
@@ -158,13 +158,39 @@
 \end{tikzpicture}
 }
 
-\newcommand{\CoverBackground}{%
-  \AddToShipoutPictureBG*{%
-    \AtPageLowerLeft{%
+\newcommand{\CoverBackground}{
+  \AddToShipoutPictureBG*{
+    \AtPageLowerLeft{
       \color{CoverColor}\rule{\paperwidth}{\paperheight}%
-    }%
-  }%
+    }
+  }
 }
+
+
+\ExplSyntaxOn
+
+\NewDocumentCommand{\IfNumberInListTF}{mmmm}
+  {
+    \bool_set_false:N \l_tmpa_bool
+
+    % Build a proper clist from the (possibly macro/braced) input
+    \clist_set:Nx \l_tmpa_clist {#2}
+
+    % Empty list? -> false
+    \clist_if_empty:NTF \l_tmpa_clist
+      { #4 }
+      {
+        \clist_map_inline:Nn \l_tmpa_clist
+          {
+            \int_compare:nNnTF { \int_eval:n {#1} } = { \int_eval:n {##1} }
+              { \bool_set_true:N \l_tmpa_bool \clist_map_break: }
+              { }
+          }
+        \bool_if:NTF \l_tmpa_bool {#3} {#4}
+      }
+  }
+
+\ExplSyntaxOff
 
 
 % -- Calendar Commands --
@@ -220,7 +246,7 @@
 }
 
 % 1: Number of days of current month
-\newcommand{\drawDayNumbers}[1]{
+\newcommand{\drawDayNumbers}[2]{
     \setcounter{DayIndex}{0}
 
     % Draw day numbers of last month
@@ -256,7 +282,11 @@
             \setcounter{Row}{\intcalcMod{\arabic{Row}}{\NumberOfWeeks}}
 	\fi
 
-        \drawActiveDayNumber{\activeDayNumber}
+	\IfNumberInListTF{\activeDayNumber}{#2}{
+            \drawActiveDayNumber{\activeDayNumber\ •}
+	}{
+            \drawActiveDayNumber{\activeDayNumber}
+        }
 
 	\stepcounter{DayIndex}
     }
@@ -329,7 +359,7 @@
 }
 
 % 1: Color of cell
-\newcommand{\colorCell}[2]{
+\newcommand{\colorCell}[1]{
     \path [fill = white, draw = none]
     (\arabic{Column} * \GridStep, -\arabic{Row} * \GridStep)
     rectangle
@@ -339,51 +369,6 @@
     (\arabic{Column} * \GridStep, -\arabic{Row} * \GridStep)
     rectangle
     (\calculateValue{\arabic{Column} + 1} * \GridStep, -\calculateValue{\arabic{Row} + 1} * \GridStep);
-}
-
-% 1: Number of days of current month
-\newcommand{\colorOutOfMonthDays}[1]{
-    \setcounter{DayIndex}{0}
-
-    % Draw day numbers of last month
-    \ifnum \arabic{FirstDayNumber} < \calculateValue{\arabic{NumberOfDaysOfLastMonth} + 1}
-        \foreach \inactiveDayNumber in {\arabic{FirstDayNumber}, ..., \arabic{NumberOfDaysOfLastMonth}} {
-            \setcounter{Row}{\intcalcDiv{\arabic{DayIndex}}{\NumberOfWeekdays}}
-            \setcounter{Column}{\intcalcMod{\arabic{DayIndex}}{\NumberOfWeekdays}}
-
-	    \colorCell{InactiveDayNumberColor!10}
-
-	    \stepcounter{DayIndex}
-        }
-    \fi
-
-    % Draw day numbers of current month
-    \foreach \activeDayNumber in {1, ..., #1} {
-        \setcounter{Row}{\intcalcDiv{\arabic{DayIndex}}{\NumberOfWeekdays}}
-        \setcounter{Column}{\intcalcMod{\arabic{DayIndex}}{\NumberOfWeekdays}}
-
-        \ifnum \arabic{Row} > \calculateValue{\NumberOfWeeks - 1}
-	    % The day index exceeds the maximal number of fields,
-	    % such that the day number needs to be drawn at the beginning of calendar fields.
-            \setcounter{Row}{\intcalcMod{\arabic{Row}}{\NumberOfWeeks}}
-	\fi
-
-	\stepcounter{DayIndex}
-    }
-
-    % Draw day numbers of next month
-    \ifnum \arabic{DayIndex} < \NumberOfDays
-        \setcounter{NumberOfDaysForNextMonth}{\calculateValue{\NumberOfDays - \arabic{DayIndex}}}
-
-	\foreach \inactiveDayNumber in {1,...,\arabic{NumberOfDaysForNextMonth}} {
-            \setcounter{Row}{\intcalcDiv{\arabic{DayIndex}}{\NumberOfWeekdays}}
-            \setcounter{Column}{\intcalcMod{\arabic{DayIndex}}{\NumberOfWeekdays}}
-
-	    \colorCell{InactiveDayNumberColor!10}
-
-	    \stepcounter{DayIndex}
-	}
-    \fi
 }
 
 % 1: Name of month
@@ -401,10 +386,9 @@
             \drawLineSeparator
             \drawAllWeekdayNames
             \colorWeekendFields{#2!10}
-	    \colorOutOfMonthDays{#3}
 	    \colorHolidays{#4}
             \drawGridLines
-            \drawDayNumbers{#3}
+	    \drawDayNumbers{#3}{#4}
         \end{tikzpicture}
     \end{center}
 }
