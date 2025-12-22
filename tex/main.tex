@@ -455,13 +455,21 @@
 
 \begin{document}
 
-\CoverBackground
-\includepdf[pages=1,pagecommand={\thispagestyle{empty}}]{Cover.pdf}
-\ClearShipoutPictureBG
+\begin{tikzpicture}[remember picture,overlay]
+    \fill[CoverColor] (current page.north west) rectangle ([yshift=-\paperwidth]current page.north east);
+    \node[anchor=north west,inner sep=0] at (current page.north west) {%
+        \includegraphics[width=\paperwidth,height=\paperheight]{Cover.png}%
+    };
+\end{tikzpicture}%
+
+\nopagecolor
+
+\nopagecolor
 \drawCalendarYear
 \newpage
-\CoverBackground
-\includepdf[pages=1,pagecommand={\thispagestyle{empty}}]{Outro.pdf}
-\ClearShipoutPictureBG
+
+\begin{tikzpicture}[remember picture,overlay]
+    \fill[CoverColor] (current page.north west) rectangle ([yshift=-\paperwidth]current page.north east);
+\end{tikzpicture}%
 
 \end{document}

@@ -1,5 +1,5 @@
 # Fdb version 4
-["lualatex"] 1766408507.31585 "main.tex" "main.pdf" "main" 1766408510.16096 0
+["lualatex"] 1766440742.10484 "main.tex" "main.pdf" "main" 1766440745.65863 0
   "../pics/April.png" 1766326006.22257 2098449 6412d686137ab26b9b8c6ad70f2b5cee ""
   "../pics/August.png" 1766326006.24457 1833440 9ff72d2f1e2a3d39f1fc3b799122b847 ""
   "../pics/Dezember.png" 1766326006.24157 1944790 3e1f33b8ec7783f470ac3a89e3b69b4f ""
@@ -172,12 +172,12 @@
   "/usr/share/texlive/texmf-dist/tex/luatex/luaotfload/luaotfload-tounicode.lua" 1693603203 7528 c5b104d6d5d1d86f13d45294df8ac77f ""
   "/usr/share/texlive/texmf-dist/tex/luatex/luaotfload/luaotfload-unicode.lua" 1693603203 7917 2ac5fb697191fbe7f30f4ab4e5f7037b ""
   "/usr/share/texlive/texmf-dist/tex/luatex/luaotfload/luaotfload.lua" 1693603203 13565 c514d92e6ff6be7b2f35d8e0eb56185c ""
+  "/usr/share/texmf/fonts/opentype/public/lm/lmroman12-regular.otf" 1255129361 110400 d844cffffa1af59f9d2bb1bfdb6f1a2c ""
   "/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map" 1763672893.71843 77930 dad7a7a153c57be8d26b82384a2548e8 ""
   "/var/lib/texmf/web2c/luahbtex/lualatex.fmt" 1730400000 12242272 f8babf0b2ca928c985b502ee5da41adf ""
-  "Cover.pdf" 1766326006.38158 1312415 6343e165e1b1c487209bfdd772ba8714 ""
-  "Outro.pdf" 1766326006.38034 6841 7279105f2c302741f1210d047342d8a2 ""
-  "main.aux" 1766408510.05549 1742 6291a9649b55af9475d963a3a79f2bd2 "lualatex"
-  "main.tex" 1766408506.41547 14952 5d9eb17a0cb430a3f960dd5eec2d7f9c ""
+  "Cover.png" 1766440693.0454 1216953 bb61d529bba9f2986d8e28b731924def ""
+  "main.aux" 1766440745.55866 1829 c4f8c8e0c70437bb092762994353cd20 "lualatex"
+  "main.tex" 1766440741.47864 15263 46ddecc8151a2f5b1bd6e65ce30a110a ""
   (generated)
   "main.aux"
   "main.log"
