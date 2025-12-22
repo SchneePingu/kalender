@@ -11,8 +11,7 @@
 %\usepackage{lua-visual-debug}
 
 % -- Settings --
-\newcommand{\CalendarName}{}
-\newcommand{\isLeapYear}{\false}
+\def\year{2026}
 \newcommand{\DayNumberOfLastMondayOfDecemberOfLastYear}{29}
 
 \def\JanuarHolidays{1,6}
@@ -56,7 +55,6 @@
 \definecolor{NovemberColor}{HTML}{\colorDunkelblau}
 \definecolor{DezemberColor}{HTML}{\colorRot}
 
-\definecolor{CalendarNameColor}{HTML}{0e1111}
 
 \definecolor{BottomHelperLineColor}{HTML}{DFE3EE}
 
@@ -119,7 +117,6 @@
 \newcommand{\DayNumberVerticalSpacing}{\GridStep * 0.15}
 \newcommand{\DayNumberHorizontalSpacing}{\GridStep * 0.2}
 
-\newcommand{\CalendarNameVerticalSpacing}{1.75}
 
 \newcommand{\BottomHelperLineVerticalSpacing}{\calculateValue{42.6 - 30.3}}
 
@@ -190,6 +187,25 @@
 
 \ExplSyntaxOff
 
+\def\isLeapYear{\false}
+
+\newcommand{\SetIsLeapYear}[1]{%
+  \ifnum\numexpr#1-4*(#1/4)=0\relax
+    \ifnum\numexpr#1-100*(#1/100)=0\relax
+      \ifnum\numexpr#1-400*(#1/400)=0\relax
+        \def\isLeapYear{\true}%
+      \else
+        \def\isLeapYear{\false}%
+      \fi
+    \else
+      \def\isLeapYear{\true}%
+    \fi
+  \else
+    \def\isLeapYear{\false}%
+  \fi
+}
+
+\SetIsLeapYear{\year}
 
 % -- Calendar Commands --
 
