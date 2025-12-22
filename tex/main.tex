@@ -16,12 +16,12 @@
 \newcommand{\DayNumberOfLastMondayOfDecemberOfLastYear}{29}
 
 \def\JanuarHolidays{1,6}
-\def\FebruarHolidays{1}
-\def\MärzHolidays{1}
+\def\FebruarHolidays{}
+\def\MärzHolidays{}
 \def\AprilHolidays{3,6,31}
 \def\MaiHolidays{1,14,25}
 \def\JuniHolidays{4}
-\def\JuliHolidays{1}
+\def\JuliHolidays{}
 \def\AugustHolidays{15}
 \def\SeptemberHolidays{33}
 \def\OktoberHolidays{3,32}
@@ -161,7 +161,7 @@
 \newcommand{\CoverBackground}{
   \AddToShipoutPictureBG*{
     \AtPageLowerLeft{
-      \color{CoverColor}\rule{\paperwidth}{\paperheight}%
+      \color{CoverColor}\rule{\paperwidth}{\paperheight}
     }
   }
 }
@@ -173,10 +173,8 @@
   {
     \bool_set_false:N \l_tmpa_bool
 
-    % Build a proper clist from the (possibly macro/braced) input
     \clist_set:Nx \l_tmpa_clist {#2}
 
-    % Empty list? -> false
     \clist_if_empty:NTF \l_tmpa_clist
       { #4 }
       {
@@ -305,7 +303,11 @@
 	        \fi
 	    \fi
 
-            \drawInactiveDayNumber{\inactiveDayNumber}
+	    \IfNumberInListTF{\calculateValue{#1 + \inactiveDayNumber}}{#2}{
+            	\drawInactiveDayNumber{\inactiveDayNumber\ •}
+	    }{
+            	\drawInactiveDayNumber{\inactiveDayNumber}
+            }
 
 	    \stepcounter{DayIndex}
 	}
