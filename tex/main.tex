@@ -35,20 +35,6 @@
 \newcommand{\NovemberPicture}{November.png}
 \newcommand{\DezemberPicture}{Dezember.png}
 
-% -- Months Prompts --
-\newcommand{\JanuarPrompt}{Januar.txt}
-\newcommand{\FebruarPrompt}{Februar.txt}
-\newcommand{\MärzPrompt}{März.txt}
-\newcommand{\AprilPrompt}{April.txt}
-\newcommand{\MaiPrompt}{Mai.txt}
-\newcommand{\JuniPrompt}{Juni.txt}
-\newcommand{\JuliPrompt}{Juli.txt}
-\newcommand{\AugustPrompt}{August.txt}
-\newcommand{\SeptemberPrompt}{September.txt}
-\newcommand{\OktoberPrompt}{Oktober.txt}
-\newcommand{\NovemberPrompt}{November.txt}
-\newcommand{\DezemberPrompt}{Dezember.txt}
-
 % -- Constants --
 \newcommand{\NumberOfWeekdays}{7}
 \newcommand{\NumberOfWeeks}{5}
@@ -86,6 +72,7 @@
 % -- Font Sizes --
 
 \newcommand{\MonthNameFontSize}{\fontsize{64pt}{12pt}\selectfont}
+\newcommand{\YearFontSize}{\fontsize{40pt}{12pt}\selectfont}
 \newcommand{\WeekdayNameFontSize}{\fontsize{18pt}{12pt}\selectfont}
 \newcommand{\DayNumberFontSize}{\fontsize{14pt}{12pt}\selectfont}
 
@@ -335,6 +322,9 @@
     \node at
     (\GridWidth / 2, \WeekdayNamesHeight + \MonthNameVerticalSpacing)
     { \MonthNameFontSize \textcolor{#2}{#1} };
+    \node at
+    (\GridWidth / 2 + 3 * \GridStep, \WeekdayNamesHeight + \MonthNameVerticalSpacing)
+    { \YearFontSize \textcolor{InactiveDayNumberColor}{\year} };
 }
 
 \newcommand{\drawLineSeparator}{

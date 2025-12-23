@@ -1,5 +1,5 @@
 # Fdb version 4
-["lualatex"] 1766515254.23026 "main.tex" "main.pdf" "main" 1766515257.76934 0
+["lualatex"] 1766516217.63909 "main.tex" "main.pdf" "main" 1766516221.13823 0
   "../pics/April.png" 1766326006.22257 2098449 6412d686137ab26b9b8c6ad70f2b5cee ""
   "../pics/August.png" 1766326006.24457 1833440 9ff72d2f1e2a3d39f1fc3b799122b847 ""
   "../pics/Dezember.png" 1766326006.24157 1944790 3e1f33b8ec7783f470ac3a89e3b69b4f ""
@@ -15,7 +15,7 @@
   "/home/dani/.texlive2023/texmf-var/luatex-cache/generic/fonts/otl/lmroman12-bold.luc" 1763672896.59144 128281 c6f80f39b6b4f903e4339f6819ec2ecc ""
   "/home/dani/.texlive2023/texmf-var/luatex-cache/generic/fonts/otl/lmroman12-regular.luc" 1763672639.43403 127652 a5bcc9609cb60f4b11aae93e79c7a0c6 ""
   "/home/dani/.texlive2023/texmf-var/luatex-cache/generic/fonts/otl/robotocondensed-bold.luc" 1763672896.86745 225635 2c2f09bab190d0266ea1d27c3b4144b3 ""
-  "/home/dani/.texlive2023/texmf-var/luatex-cache/generic/names/luaotfload-lookup-cache.luc" 1763672897.03558 2022 2f6fa205dd7857587b73d36ddf98efc2 ""
+  "/home/dani/.texlive2023/texmf-var/luatex-cache/generic/names/luaotfload-lookup-cache.luc" 1766515876.04333 2298 51fb6676fd65a743845cf9e2743f6e9b ""
   "/home/dani/.texlive2023/texmf-var/luatex-cache/generic/names/luaotfload-names.luc.gz" 1763672639.35903 78414 80d48616182031acfff598f0a0b3878e ""
   "/usr/local/share/fonts/RobotoCondensed/RobotoCondensed-Bold.ttf" 1340661600 166340 e38804ae070b58fbf4fdd88fd6853929 ""
   "/usr/share/texlive/texmf-dist/tex/context/base/mkii/supp-pdf.mkii" 1461363279 71627 94eb9990bed73c364d7f53f960cc8c5b ""
@@ -181,8 +181,8 @@
   "/var/lib/texmf/web2c/luahbtex/lualatex.fmt" 1730400000 12242272 f8babf0b2ca928c985b502ee5da41adf ""
   "Cover.png" 1766440693.0454 1216953 bb61d529bba9f2986d8e28b731924def ""
   "config_default.tex" 1766514945.08515 1158 c3501c02ca7174c388366f82477f3949 ""
-  "main.aux" 1766515257.66503 1829 c4f8c8e0c70437bb092762994353cd20 "lualatex"
-  "main.tex" 1766515253.18901 18485 472ab03f4a4bae3b61978c024c3056d8 ""
+  "main.aux" 1766516221.02384 1829 c4f8c8e0c70437bb092762994353cd20 "lualatex"
+  "main.tex" 1766516216.09682 18218 47bd7085a801d69df9057cda744ae968 ""
   (generated)
   "main.aux"
   "main.log"
