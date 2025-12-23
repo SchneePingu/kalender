@@ -10,50 +10,13 @@
 
 %\usepackage{lua-visual-debug}
 
-
-% -- Settings --
-\def\year{2026}
-
-\def\JanuarHolidays{1,6}
-\def\FebruarHolidays{}
-\def\MärzHolidays{}
-\def\AprilHolidays{3,6}
-\def\MaiHolidays{1,14,25}
-\def\JuniHolidays{4}
-\def\JuliHolidays{}
-\def\AugustHolidays{15}
-\def\SeptemberHolidays{}
-\def\OktoberHolidays{3}
-\def\NovemberHolidays{1}
-\def\DezemberHolidays{25,26}
-
-\newcommand{\colorDunkelblau}{21a0e7}
-\newcommand{\colorHellblau}{5bc0de}
-\newcommand{\colorGelb}{ffcc5c}
-\newcommand{\colorRot}{ff6f69}
-\newcommand{\colorLachsfarben}{ff9966}
-\newcommand{\colorGruen}{6cbf6c}
+\InputIfFileExists{config.tex}{}{\input{config_default.tex}}
 
 % -- Colors --
-\definecolor{CoverColor}{HTML}{50938a}
 \definecolor{WeekdayNameColor}{HTML}{525254}
 \definecolor{LineColor}{HTML}{5A5f7A}
 \definecolor{ActiveDayNumberColor}{HTML}{525254}
 \definecolor{InactiveDayNumberColor}{HTML}{A4A5A8}
-\definecolor{HolidayColor}{HTML}{500090}
-
-\definecolor{JanuarColor}{HTML}{\colorDunkelblau}
-\definecolor{FebruarColor}{HTML}{\colorHellblau}
-\definecolor{MärzColor}{HTML}{\colorGruen}
-\definecolor{AprilColor}{HTML}{\colorLachsfarben}
-\definecolor{MaiColor}{HTML}{\colorRot}
-\definecolor{JuniColor}{HTML}{\colorLachsfarben}
-\definecolor{JuliColor}{HTML}{\colorGelb}
-\definecolor{AugustColor}{HTML}{\colorHellblau}
-\definecolor{SeptemberColor}{HTML}{\colorGruen}
-\definecolor{OktoberColor}{HTML}{\colorGelb}
-\definecolor{NovemberColor}{HTML}{\colorDunkelblau}
-\definecolor{DezemberColor}{HTML}{\colorRot}
 
 
 \definecolor{BottomHelperLineColor}{HTML}{DFE3EE}
@@ -208,34 +171,70 @@
 \SetIsLeapYear{\year}
 
 
-% holds the result (as digits)
 \def\DayNumberOfLastMondayOfDecemberOfLastYear{0}
 
-% sets \DayNumberOfLastMondayOfDecemberOfLastYear for a given year #1
+\newcount\LMYear
+\newcount\LMCalc
+\newcount\LMtmp
+\newcount\LMWeekday
+\newcount\LMOffset
+\newcount\LMResult
+
+
 \def\SetDayNumberOfLastMondayOfDecemberOfLastYear#1{%
   \begingroup
-  % y = previous year
-  \count0=\numexpr#1-1\relax
 
-  % Compute weekday of Dec 31 of year y using:
-  % w = ( y + floor(y/4) - floor(y/100) + floor(y/400) + 35 ) mod 7
-  % and then w := w+1 so that Sunday=1, Monday=2, ..., Saturday=7
-  \count2=\numexpr\count0 + \count0/4 - \count0/100 + \count0/400 + 35\relax
-  \count4=\numexpr\count2 - 7*(\count2/7)\relax % 0..6
-  \count6=\numexpr\count4 + 1\relax            % 1..7 (Sun=1)
+  % previous year
+  \LMYear=#1\relax
+  \advance\LMYear by -1\relax
 
-  % offset from Monday (Monday=2 in this scheme)
-  \count8=\numexpr\count6-2\relax
-  \count10=\numexpr\count8 - 7*(\count8/7)\relax % may be negative
-  \ifnum\count10<0 \count10=\numexpr\count10+7\relax\fi
+  % y/4
+  \LMtmp=\LMYear
+  \divide\LMtmp by 4
 
-  % last Monday day-of-month
-  \count12=\numexpr31-\count10\relax
+  \LMCalc=\LMYear
+  \advance\LMCalc by \LMtmp
 
-  % store globally
-  \xdef\DayNumberOfLastMondayOfDecemberOfLastYear{\the\count12}%
+  % y/100
+  \LMtmp=\LMYear
+  \divide\LMtmp by 100
+  \advance\LMCalc by -\LMtmp
+
+  % y/400
+  \LMtmp=\LMYear
+  \divide\LMtmp by 400
+  \advance\LMCalc by \LMtmp
+
+  % + 35 (Dec 31 constant)
+  \advance\LMCalc by 35
+
+  % mod 7
+  \LMtmp=\LMCalc
+  \divide\LMtmp by 7
+  \multiply\LMtmp by 7
+  \advance\LMCalc by -\LMtmp
+
+  % weekday: Sun=1 ... Sat=7
+  \LMWeekday=\LMCalc
+  \advance\LMWeekday by 1
+
+  % offset from Monday (Mon=2)
+  \LMOffset=\LMWeekday
+  \advance\LMOffset by -2
+  \ifnum\LMOffset<0 \advance\LMOffset by 7\fi
+
+  % last Monday
+  \LMResult=31
+  \advance\LMResult by -\LMOffset
+
+
+
+  \xdef\DayNumberOfLastMondayOfDecemberOfLastYear{\the\LMResult}%
+
   \endgroup
 }
+
+
 
 \SetDayNumberOfLastMondayOfDecemberOfLastYear{\year}
 
@@ -298,12 +297,6 @@
         \foreach \inactiveDayNumber in {1,...,\arabic{NumberOfDaysForNextMonth}} {
             \setcounter{Row}{\intcalcDiv{\arabic{DayIndex}}{\NumberOfWeekdays}}
             \setcounter{Column}{\intcalcMod{\arabic{DayIndex}}{\NumberOfWeekdays}}
-
-            \ifnum \arabic{Row} > \calculateValue{\NumberOfWeeks - 2}
-	        \ifnum \arabic{Column} = 0
-	            \setcounter{FirstDayNumber}{\activeDayNumber}
-	        \fi
-	    \fi
 
 	    \IfNumberInListTF{\inactiveDayNumber}{#3}{
 		\AppendToList{#2}{\calculateValue{#1 + \inactiveDayNumber}}
@@ -442,12 +435,6 @@
         \foreach \inactiveDayNumber in {1,...,\arabic{NumberOfDaysForNextMonth}} {
             \setcounter{Row}{\intcalcDiv{\arabic{DayIndex}}{\NumberOfWeekdays}}
             \setcounter{Column}{\intcalcMod{\arabic{DayIndex}}{\NumberOfWeekdays}}
-
-            \ifnum \arabic{Row} > \calculateValue{\NumberOfWeeks - 2}
-	        \ifnum \arabic{Column} = 0
-	            \setcounter{FirstDayNumber}{\activeDayNumber}
-	        \fi
-	    \fi
 
 	    \IfNumberInListTF{\calculateValue{#1 + \inactiveDayNumber}}{#2}{
             	\drawInactiveDayNumber{\inactiveDayNumber\ •}
