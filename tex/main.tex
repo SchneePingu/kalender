@@ -17,15 +17,15 @@
 \def\JanuarHolidays{1,6}
 \def\FebruarHolidays{}
 \def\MärzHolidays{}
-\def\AprilHolidays{3,6,31}
+\def\AprilHolidays{3,6}
 \def\MaiHolidays{1,14,25}
 \def\JuniHolidays{4}
 \def\JuliHolidays{}
 \def\AugustHolidays{15}
-\def\SeptemberHolidays{33}
-\def\OktoberHolidays{3,32}
+\def\SeptemberHolidays{}
+\def\OktoberHolidays{3}
 \def\NovemberHolidays{1}
-\def\DezemberHolidays{25,26,32}
+\def\DezemberHolidays{25,26}
 
 \newcommand{\colorDunkelblau}{21a0e7}
 \newcommand{\colorHellblau}{5bc0de}
@@ -240,6 +240,100 @@
 \SetDayNumberOfLastMondayOfDecemberOfLastYear{\year}
 
 
+\def\AppendToList#1#2{%
+  \ifx#1\empty
+    \xdef#1{#2}%
+  \else
+    \xdef#1{#1,#2}%
+  \fi
+}
+
+
+
+% 1: Number of days of current month
+% 2: Holidays of current month
+% 3: Holidays of next month
+\newcommand{\AddHolidaysOfNextMonth}[3]{
+    \setcounter{DayIndex}{0}
+
+    % Step day numbers of last month
+    \ifnum \arabic{FirstDayNumber} < \calculateValue{\arabic{NumberOfDaysOfLastMonth} + 1}
+        \foreach \inactiveDayNumber in {\arabic{FirstDayNumber}, ..., \arabic{NumberOfDaysOfLastMonth}} {
+            \setcounter{Row}{\intcalcDiv{\arabic{DayIndex}}{\NumberOfWeekdays}}
+            \setcounter{Column}{\intcalcMod{\arabic{DayIndex}}{\NumberOfWeekdays}}
+
+	    \stepcounter{DayIndex}
+        }
+    \fi
+
+    % Step day numbers of current month
+    \foreach \activeDayNumber in {1, ..., #1} {
+        \setcounter{Row}{\intcalcDiv{\arabic{DayIndex}}{\NumberOfWeekdays}}
+        \setcounter{Column}{\intcalcMod{\arabic{DayIndex}}{\NumberOfWeekdays}}
+
+        \ifnum \arabic{Row} > \calculateValue{\NumberOfWeeks - 2}
+	    \ifnum \arabic{Column} = 0
+	        \setcounter{FirstDayNumber}{\activeDayNumber}
+	    \fi
+
+	    \ifnum \arabic{Column} = 6
+	        \setcounter{FirstDayNumber}{\calculateValue{#1 + 1}}
+	    \fi
+	\fi
+
+        \ifnum \arabic{Row} > \calculateValue{\NumberOfWeeks - 1}
+	    % The day index exceeds the maximal number of fields,
+	    % such that the day number needs to be drawn at the beginning of calendar fields.
+            \setcounter{Row}{\intcalcMod{\arabic{Row}}{\NumberOfWeeks}}
+	\fi
+
+
+	\stepcounter{DayIndex}
+    }
+
+    % Step day numbers of next month
+    \ifnum \arabic{DayIndex} < \NumberOfDays
+        \setcounter{NumberOfDaysForNextMonth}{\calculateValue{\NumberOfDays - \arabic{DayIndex}}}
+
+        \foreach \inactiveDayNumber in {1,...,\arabic{NumberOfDaysForNextMonth}} {
+            \setcounter{Row}{\intcalcDiv{\arabic{DayIndex}}{\NumberOfWeekdays}}
+            \setcounter{Column}{\intcalcMod{\arabic{DayIndex}}{\NumberOfWeekdays}}
+
+            \ifnum \arabic{Row} > \calculateValue{\NumberOfWeeks - 2}
+	        \ifnum \arabic{Column} = 0
+	            \setcounter{FirstDayNumber}{\activeDayNumber}
+	        \fi
+	    \fi
+
+	    \IfNumberInListTF{\inactiveDayNumber}{#3}{
+		\AppendToList{#2}{\calculateValue{#1 + \inactiveDayNumber}}
+	    }{}
+
+	    \stepcounter{DayIndex}
+	}
+    \fi
+
+    \setcounter{NumberOfDaysOfLastMonth}{#1}
+}
+
+
+\setcounter{FirstDayNumber}{\DayNumberOfLastMondayOfDecemberOfLastYear}
+\setcounter{NumberOfDaysOfLastMonth}{\DezemberNumberOfDays}
+\AddHolidaysOfNextMonth\JanuarNumberOfDays\JanuarHolidays\FebruarHolidays
+\AddHolidaysOfNextMonth\FebruarNumberOfDays\FebruarHolidays\MärzHolidays
+\AddHolidaysOfNextMonth\MärzNumberOfDays\MärzHolidays\AprilHolidays
+\AddHolidaysOfNextMonth\AprilNumberOfDays\AprilHolidays\MaiHolidays
+\AddHolidaysOfNextMonth\MaiNumberOfDays\MaiHolidays\JuniHolidays
+\AddHolidaysOfNextMonth\JuniNumberOfDays\JuniHolidays\JuliHolidays
+\AddHolidaysOfNextMonth\JuliNumberOfDays\JuliHolidays\AugustHolidays
+\AddHolidaysOfNextMonth\AugustNumberOfDays\AugustHolidays\SeptemberHolidays
+\AddHolidaysOfNextMonth\SeptemberNumberOfDays\SeptemberHolidays\OktoberHolidays
+\AddHolidaysOfNextMonth\OktoberNumberOfDays\OktoberHolidays\NovemberHolidays
+\AddHolidaysOfNextMonth\NovemberNumberOfDays\NovemberHolidays\DezemberHolidays
+\AddHolidaysOfNextMonth\DezemberNumberOfDays\DezemberHolidays\JanuarHolidays
+
+
+
 % -- Calendar Commands --
 
 % 1: Name of month
@@ -292,7 +386,10 @@
      }
 }
 
+
+
 % 1: Number of days of current month
+% 2: Holidays of current month
 \newcommand{\drawDayNumbers}[2]{
     \setcounter{DayIndex}{0}
 
