@@ -1,4 +1,4 @@
-This is LuaHBTeX, Version 1.17.0 (TeX Live 2023/Debian)  (format=lualatex 2024.10.31)  23 DEC 2025 19:35
+This is LuaHBTeX, Version 1.17.0 (TeX Live 2023/Debian)  (format=lualatex 2024.10.31)  25 DEC 2025 11:54
  restricted system commands enabled.
 **__build_error__.tex
 (./__build_error__.tex
@@ -210,7 +210,7 @@ Here is how much of LuaTeX's memory you used:
 lic/lm/lmbx10.pfb></usr/share/texmf/fonts/type1/public/lm/lmbx12.pfb></usr/share
 /texmf/fonts/type1/public/lm/lmr10.pfb></usr/share/texmf/fonts/type1/public/lm/l
 mtt10.pfb>
-Output written on __build_error__.pdf (1 page, 90473 bytes).
+Output written on __build_error__.pdf (1 page, 90176 bytes).
 
 PDF statistics: 25 PDF objects out of 1000 (max. 8388607)
  17 compressed objects within 1 object stream

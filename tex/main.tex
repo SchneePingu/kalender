@@ -7,6 +7,7 @@
   margin=0mm
 }
 \graphicspath{ {../pics/} }
+\newcommand{\ImageDir}{../pics/}
 
 %\usepackage{lua-visual-debug}
 
@@ -234,6 +235,29 @@
   \fi
 }
 
+
+\newcommand\IfGraphicExistsTF[3]{%
+  \begingroup
+  \let\Ginput@path\Ginput@path % keep graphicspath
+  \edef\Gin@base{#1}%
+  % Try to resolve the file the same way \includegraphics does:
+  \@ifundefined{Gin@setfile}{%
+    % graphicx not ready (shouldn't happen if graphicx loaded)
+    \endgroup #3%
+  }{%
+    \let\Gin@ext\relax
+    \let\Gin@sep\relax
+    \let\Gin@rule\relax
+    \let\Gin@req@bb\relax
+    % This sets \Gin@setfile@found and \Gin@setfile@name internally
+    \Gin@setfile\Gin@base
+    \ifx\Gin@setfile@name\@empty
+      \endgroup #3%
+    \else
+      \endgroup #2%
+    \fi
+  }%
+}
 
 
 % 1: Number of days of current month
@@ -519,19 +543,21 @@
 }
 
 
+
 \newcommand{\addPicturePage}[2]{%
   \clearpage
   \thispagestyle{empty}%
   \begin{tikzpicture}[remember picture,overlay]
-    % Add an up-side down picture at the top of the page.
-    \node[anchor=north west,inner sep=0] at (current page.north west) {%
-      \rotatebox{180}{\includegraphics[width=\paperwidth,height=\paperwidth]{#2}}%
-    };
-    % Add a colored rectangle as an overlay at the top of the page.
+    \IfFileExists{\ImageDir#2}{%
+      \node[anchor=north west,inner sep=0] at (current page.north west) {%
+        \rotatebox{180}{\includegraphics[width=\paperwidth,height=\paperwidth]{\ImageDir#2}}%
+      };%
+    }{}%
     \fill[#1] (current page.north west) rectangle ([yshift=-2cm]current page.north east);
   \end{tikzpicture}%
   \clearpage
 }
+
 
 
 \newcommand{\drawCalendarYear}{
